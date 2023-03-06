@@ -1,3 +1,4 @@
+import 'package:agenda_luthfi/bloc/agenda_bloc.dart';
 import 'package:agenda_luthfi/bloc/date_time_agenda_bloc.dart';
 import 'package:agenda_luthfi/bloc/gender_bloc.dart';
 import 'package:agenda_luthfi/bloc/reminder_bloc.dart';
@@ -41,6 +42,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => UserBloc(DatabaseHelper()),
+        ),
+        BlocProvider(
+          create: (_) => AgendaBloc(DatabaseHelper()),
         ),
       ],
       child: MaterialApp(

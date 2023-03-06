@@ -1,3 +1,4 @@
+import 'package:agenda_luthfi/bloc/agenda_bloc.dart';
 import 'package:agenda_luthfi/bloc/user_bloc.dart';
 import 'package:agenda_luthfi/shared/theme.dart';
 import 'package:agenda_luthfi/ui/widgets/agenda_tile.dart';
@@ -18,8 +19,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    // context.read<DestinationCubit>().fetchDestinations();
     super.initState();
+    context.read<AgendaBloc>().add(FetchAgendas());
   }
 
   @override
@@ -116,53 +117,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       );
-
-      // return BlocBuilder<AuthCubit, AuthState>(
-      //   builder: (context, state) {
-      //     if (state is AuthSuccess) {
-      //       return Container(
-      //         margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-      //         child: Row(
-      //           children: [
-      //             Expanded(
-      //               child: Column(
-      //                 crossAxisAlignment: CrossAxisAlignment.start,
-      //                 children: [
-      //                   Text(
-      //                     'Howdy,\n${state.user.name}',
-      //                     style: blackTextStyle.copyWith(
-      //                         fontSize: 24, fontWeight: semiBold),
-      //                   ),
-      //                   SizedBox(
-      //                     height: 6,
-      //                   ),
-      //                   Text(
-      //                     'Where to fly today?',
-      //                     style: greyTextStyle.copyWith(
-      //                         fontSize: 16, fontWeight: light),
-      //                   )
-      //                 ],
-      //               ),
-      //             ),
-      //             Container(
-      //               width: 60,
-      //               height: 60,
-      //               decoration: BoxDecoration(
-      //                   shape: BoxShape.circle,
-      //                   image: DecorationImage(
-      //                       image: AssetImage('assets/image_profile.png'))),
-      //             )
-      //           ],
-      //         ),
-      //       );
-      //     } else {
-      //       return SizedBox();
-      //     }
-      //   },
-      // );
     }
 
-    Widget newDestinations() {
+    Widget content() {
       return Container(
         margin: EdgeInsets.only(
             top: 30, left: defaultMargin, right: defaultMargin, bottom: 100),
@@ -174,14 +131,35 @@ class _HomePageState extends State<HomePage> {
               style:
                   blackTextStyle.copyWith(fontSize: 18, fontWeight: semiBold),
             ),
-            ListView.builder(
-              itemCount: 20,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return AgendaTile(
-                  index: index,
-                );
+            BlocBuilder<AgendaBloc, AgendaState>(
+              builder: (context, state) {
+                if (state is AgendaLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is AgendaHasData) {
+                  return ListView.builder(
+                    itemCount: 20,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return AgendaTile(
+                        index: index,
+                      );
+                    },
+                  );
+                } else if (state is AgendaError) {
+                  return Center(
+                    key: const Key('error_message'),
+                    child: Text(state.message),
+                  );
+                } else if (state is AgendaEmpty) {
+                  return const Center(
+                    child: Text('No Agenda.'),
+                  );
+                } else {
+                  return const Center(child: Text('Failed'));
+                }
               },
             ),
             // Column(
@@ -199,7 +177,7 @@ class _HomePageState extends State<HomePage> {
       body: ListView(
         children: [
           header(),
-          newDestinations(),
+          content(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

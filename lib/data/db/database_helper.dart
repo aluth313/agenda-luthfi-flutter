@@ -1,3 +1,4 @@
+import 'package:agenda_luthfi/data/models/agenda_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
@@ -70,12 +71,12 @@ class DatabaseHelper {
   //   await db!.insert(_tblUsers, restaurantElement.toJson());
   // }
 
-  // Future<List<RestaurantElement>> getFavourites() async {
-  //   final db = await database;
-  //   List<Map<String, dynamic>> results = await db!.query(_tblUsers);
+  Future<List<Agenda>> getAgendas() async {
+    final db = await database;
+    List<Map<String, dynamic>> results = await db!.query(_tblAgendas);
 
-  //   return results.map((res) => RestaurantElement.fromJson(res)).toList();
-  // }
+    return results.map((res) => Agenda.fromJson(res)).toList();
+  }
 
   Future<Map> getUserByEmailPassword(String email, String password) async {
     final db = await database;
