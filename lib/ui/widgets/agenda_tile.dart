@@ -1,23 +1,27 @@
+import 'package:agenda_luthfi/bloc/agenda_bloc.dart';
+import 'package:agenda_luthfi/data/models/agenda_model.dart';
 import 'package:agenda_luthfi/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class AgendaTile extends StatelessWidget {
-  // final DestinationModel destination;
-  final int index;
+  final Agenda agenda;
+  // final int index;
 
-  const AgendaTile({Key? key, required this.index}) : super(key: key);
+  const AgendaTile({Key? key, required this.agenda}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      key: ValueKey(index),
+      key: ValueKey(agenda.id),
       endActionPane: ActionPane(
         motion: ScrollMotion(),
         children: [
           SlidableAction(
             onPressed: (context) {
-              print('Edit $index');
+              print('Edit ${agenda.id}');
             },
             backgroundColor: kBackgroundColor,
             foregroundColor: kBlackColor,
@@ -25,7 +29,34 @@ class AgendaTile extends StatelessWidget {
           ),
           SlidableAction(
             onPressed: (context) {
-              print('Delete ${index}');
+              print('Delete ${agenda.id}');
+              showDialog<void>(
+                context: context,
+                barrierDismissible: false, // user must tap button!
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Confirm'),
+                    content: Text('Are you sure want to delete?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Yes'),
+                        onPressed: () {
+                          context
+                              .read<AgendaBloc>()
+                              .add(DeleteAgenda(agenda.id!));
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('No'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
             backgroundColor: kBackgroundColor,
             foregroundColor: kBlackColor,
@@ -59,7 +90,7 @@ class AgendaTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Travelling',
+                    agenda.title,
                     overflow: TextOverflow.ellipsis,
                     style: blackTextStyle.copyWith(
                       fontSize: 15,
@@ -70,7 +101,7 @@ class AgendaTile extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    'Saturday, 14 Nov 2023',
+                    convertDate(agenda.datetime, 'EEEE, d MMM y'),
                     overflow: TextOverflow.ellipsis,
                     style: greyTextStyle.copyWith(
                       fontWeight: light,
@@ -81,7 +112,7 @@ class AgendaTile extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    '02 : 00 PM',
+                    convertDate(agenda.datetime, 'hh:mm a'),
                     overflow: TextOverflow.ellipsis,
                     style: greyTextStyle.copyWith(
                       fontWeight: light,
@@ -91,24 +122,26 @@ class AgendaTile extends StatelessWidget {
                   SizedBox(
                     height: 5,
                   ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.notifications_active_outlined,
-                        size: 16,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        '30min',
-                        style: greyTextStyle.copyWith(
-                          fontWeight: light,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
+                  agenda.reminder != null
+                      ? Row(
+                          children: [
+                            Icon(
+                              Icons.notifications_active_outlined,
+                              size: 16,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              agenda.reminder ?? '',
+                              style: greyTextStyle.copyWith(
+                                fontWeight: light,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        )
+                      : SizedBox(),
                   SizedBox(
                     height: 5,
                   ),
@@ -123,7 +156,7 @@ class AgendaTile extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
+                    agenda.description,
                     textAlign: TextAlign.justify,
                     style: greyTextStyle.copyWith(
                       fontWeight: light,
@@ -150,7 +183,7 @@ class AgendaTile extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                            'dokumen.pdf',
+                            agenda.attachment,
                             overflow: TextOverflow.ellipsis,
                             style: greyTextStyle.copyWith(
                               fontWeight: light,

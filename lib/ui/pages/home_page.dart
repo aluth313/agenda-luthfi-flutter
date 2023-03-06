@@ -139,12 +139,12 @@ class _HomePageState extends State<HomePage> {
                   );
                 } else if (state is AgendaHasData) {
                   return ListView.builder(
-                    itemCount: 20,
+                    itemCount: state.result.length,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return AgendaTile(
-                        index: index,
+                        agenda: state.result[index],
                       );
                     },
                   );

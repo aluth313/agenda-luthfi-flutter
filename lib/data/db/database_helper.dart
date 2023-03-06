@@ -66,10 +66,10 @@ class DatabaseHelper {
     return _database;
   }
 
-  // Future<void> insertUser(RestaurantElement restaurantElement) async {
-  //   final db = await database;
-  //   await db!.insert(_tblUsers, restaurantElement.toJson());
-  // }
+  Future<void> insertAgenda(Agenda agenda) async {
+    final db = await database;
+    await db!.insert(_tblAgendas, agenda.toJson());
+  }
 
   Future<List<Agenda>> getAgendas() async {
     final db = await database;
@@ -99,13 +99,13 @@ class DatabaseHelper {
     }
   }
 
-  // Future<void> removeFavourite(String id) async {
-  //   final db = await database;
+  Future<void> removeAgenda(int id) async {
+    final db = await database;
 
-  //   await db!.delete(
-  //     _tblUsers,
-  //     where: 'id = ?',
-  //     whereArgs: [id],
-  //   );
-  // }
+    await db!.delete(
+      _tblAgendas,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

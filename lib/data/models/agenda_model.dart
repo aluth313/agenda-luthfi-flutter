@@ -7,20 +7,20 @@ String agendaToJson(Agenda data) => json.encode(data.toJson());
 
 class Agenda {
   Agenda({
-    required this.id,
+    this.id,
     required this.title,
     required this.description,
     required this.datetime,
     required this.attachment,
-    required this.reminder,
+    this.reminder,
   });
 
-  final int id;
+  final int? id;
   final String title;
   final String description;
   final String datetime;
   final String attachment;
-  final String reminder;
+  final String? reminder;
 
   factory Agenda.fromJson(Map<String, dynamic> json) => Agenda(
         id: json["id"],

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:agenda_luthfi/bloc/agenda_bloc.dart';
 import 'package:agenda_luthfi/bloc/date_time_agenda_bloc.dart';
 import 'package:agenda_luthfi/bloc/reminder_bloc.dart';
 import 'package:agenda_luthfi/bloc/switch_agenda_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:agenda_luthfi/ui/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_airplane/cubit/auth_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../shared/theme.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:file_picker/file_picker.dart';
@@ -22,16 +24,16 @@ class CreateAgendaPage extends StatefulWidget {
 }
 
 class _CreateAgendaPageState extends State<CreateAgendaPage> {
-  final TextEditingController emailController = TextEditingController(text: '');
+  final TextEditingController titleController = TextEditingController(text: '');
 
-  final TextEditingController passwordController =
+  final TextEditingController descriptionController =
       TextEditingController(text: '');
 
   @override
   void initState() {
     super.initState();
     context.read<DateTimeAgendaBloc>().add(DateTimeInit());
-    context.read<ReminderBloc>().add(ReminderInit());
+    context.read<ReminderBloc>().add(IsChangeReminder('1 hour before'));
     context.read<SwitchAgendaBloc>().add(IsActivate(false));
     context.read<UploadFileBloc>().add(UploadFileInit());
   }
@@ -75,12 +77,12 @@ class _CreateAgendaPageState extends State<CreateAgendaPage> {
     Widget inputSection() {
       Widget titleInput() {
         return CustomTextFormField(
-            controller: emailController, title: 'Title', hintText: 'Title');
+            controller: titleController, title: 'Title', hintText: 'Title');
       }
 
       Widget descriptionInput() {
         return CustomTextFormField(
-          controller: passwordController,
+          controller: descriptionController,
           title: 'Description',
           hintText: 'Description',
           // obsecure: true,
@@ -190,6 +192,14 @@ class _CreateAgendaPageState extends State<CreateAgendaPage> {
                 child: DropdownButtonHideUnderline(
                   child: BlocBuilder<ReminderBloc, ReminderState>(
                     builder: (context, state) {
+                      if (state is ReminderChanged &&
+                          state.reminder != state.reminder) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          context
+                              .read<ReminderBloc>()
+                              .add(IsChangeReminder(state.reminder));
+                        });
+                      }
                       return DropdownButton<String>(
                         value: state is ReminderChanged
                             ? state.reminder
@@ -200,6 +210,9 @@ class _CreateAgendaPageState extends State<CreateAgendaPage> {
                           context
                               .read<ReminderBloc>()
                               .add(IsChangeReminder(value!));
+                          state is ReminderChanged
+                              ? print(state.reminder)
+                              : print('ga keubah');
                         },
                         items: [
                           '1 hour before',
@@ -212,6 +225,12 @@ class _CreateAgendaPageState extends State<CreateAgendaPage> {
                           );
                         }).toList(),
                       );
+                    },
+                    buildWhen: (previous, state) {
+                      if (state is ReminderChanged) {
+                        return true;
+                      }
+                      return false;
                     },
                   ),
                 ),
@@ -340,14 +359,80 @@ class _CreateAgendaPageState extends State<CreateAgendaPage> {
       }
 
       Widget submitButton() {
-        return CustomButtom(
-          title: 'Create',
-          onPressed: () {
-            // Navigator.pushNamedAndRemoveUntil(
-            //     context, '/home', (route) => false);
-            // context.read<AuthCubit>().signIn(
-            //     email: emailController.text,
-            //     password: passwordController.text);
+        return BlocBuilder<ReminderBloc, ReminderState>(
+          builder: (contextReminder, stateReminder) {
+            return BlocBuilder<SwitchAgendaBloc, SwitchAgendaState>(
+              builder: (contextSwitchAgenda, stateSwitchAgenda) {
+                return BlocBuilder<UploadFileBloc, UploadFileState>(
+                  builder: (contextUploadFile, stateUploadFile) {
+                    return BlocBuilder<DateTimeAgendaBloc, DateTimeAgendaState>(
+                      builder: (contextDateTimeAgenda, stateDateTimeAgenda) {
+                        return BlocBuilder<AgendaBloc, AgendaState>(
+                          builder: (context, state) {
+                            if (state is AgendaLoading) {
+                              EasyLoading.show(status: 'loading...');
+                            } else if (state is AgendaSuccessAdded) {
+                              EasyLoading.showSuccess('Login success!');
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, '/home', (route) => false);
+                              });
+                            } else if (state is AgendaFailedAdded) {
+                              EasyLoading.showError(state.message);
+                            }
+                            return CustomButtom(
+                              title: 'Create',
+                              onPressed: () {
+                                print(stateReminder);
+                                stateSwitchAgenda is IsActive
+                                    ? context.read<AgendaBloc>().add(
+                                          AddAgenda(
+                                              titleController.text,
+                                              descriptionController.text,
+                                              stateDateTimeAgenda
+                                                      is DateTimeAgendaChanged
+                                                  ? convertDate(
+                                                      stateDateTimeAgenda
+                                                          .dateTime
+                                                          .toIso8601String(),
+                                                      'yyyy-MM-dd hh:mm')
+                                                  : '1111-11-11 11:11',
+                                              stateUploadFile
+                                                      is UploadFileChanged
+                                                  ? stateUploadFile.path
+                                                  : '',
+                                              stateReminder is ReminderChanged
+                                                  ? stateReminder.reminder
+                                                  : null),
+                                        )
+                                    : context.read<AgendaBloc>().add(
+                                          AddAgenda(
+                                              titleController.text,
+                                              descriptionController.text,
+                                              stateDateTimeAgenda
+                                                      is DateTimeAgendaChanged
+                                                  ? convertDate(
+                                                      stateDateTimeAgenda
+                                                          .dateTime
+                                                          .toIso8601String(),
+                                                      'yyyy-MM-dd hh:mm')
+                                                  : '1111-11-11 11:11',
+                                              stateUploadFile
+                                                      is UploadFileChanged
+                                                  ? stateUploadFile.path
+                                                  : '',
+                                              null),
+                                        );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            );
           },
         );
 
@@ -372,8 +457,8 @@ class _CreateAgendaPageState extends State<CreateAgendaPage> {
         //       title: 'Sign In',
         //       onPressed: () {
         //         // context.read<AuthCubit>().signIn(
-        //         //     email: emailController.text,
-        //         //     password: passwordController.text);
+        //         //     email: titleController.text,
+        //         //     password: descriptionController.text);
         //       },
         //     );
         //   },
