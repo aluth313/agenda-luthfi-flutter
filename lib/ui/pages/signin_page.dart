@@ -1,16 +1,30 @@
+import 'package:agenda_luthfi/bloc/user_bloc.dart';
 import 'package:agenda_luthfi/ui/widgets/custom_button.dart';
 import 'package:agenda_luthfi/ui/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_airplane/cubit/auth_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../shared/theme.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
   SignInPage({Key? key}) : super(key: key);
 
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   final TextEditingController emailController = TextEditingController(text: '');
+
   final TextEditingController passwordController =
       TextEditingController(text: '');
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserBloc>().add(UserInit());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +56,32 @@ class SignInPage extends StatelessWidget {
       }
 
       Widget submitButton() {
-        return CustomButtom(
-          title: 'Sign In',
-          onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/home', (route) => false);
-            // context.read<AuthCubit>().signIn(
-            //     email: emailController.text,
-            //     password: passwordController.text);
+        return BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            if (state is UserLoading) {
+              EasyLoading.show(status: 'loading...');
+            } else if (state is UserFound) {
+              EasyLoading.showSuccess('Login success!');
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/home', (route) => false);
+              });
+            } else if (state is UserNotFound) {
+              EasyLoading.showError('User not found!');
+            }
+
+            return CustomButtom(
+              title: 'Sign In',
+              onPressed: () async {
+                if (emailController.text.isNotEmpty &&
+                    passwordController.text.isNotEmpty) {
+                  context.read<UserBloc>().add(
+                      CheckUser(emailController.text, passwordController.text));
+                } else {
+                  EasyLoading.showError('Please fill email & password!');
+                }
+              },
+            );
           },
         );
 

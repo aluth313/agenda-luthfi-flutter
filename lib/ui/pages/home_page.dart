@@ -1,3 +1,4 @@
+import 'package:agenda_luthfi/bloc/user_bloc.dart';
 import 'package:agenda_luthfi/shared/theme.dart';
 import 'package:agenda_luthfi/ui/widgets/agenda_tile.dart';
 import 'package:flutter/material.dart';
@@ -84,6 +85,7 @@ class _HomePageState extends State<HomePage> {
                               TextButton(
                                 child: const Text('Yes'),
                                 onPressed: () {
+                                  context.read<UserBloc>().add(UserInit());
                                   Navigator.pushNamedAndRemoveUntil(
                                       context, '/sign-in', (route) => false);
                                 },
