@@ -123,7 +123,9 @@ class _HomePageState extends State<HomePage> {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return AgendaTile();
+                return AgendaTile(
+                  index: index,
+                );
               },
             ),
             // Column(
@@ -143,6 +145,13 @@ class _HomePageState extends State<HomePage> {
           header(),
           newDestinations(),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print('di add');
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add_outlined),
       ),
     );
 
