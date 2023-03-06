@@ -5,15 +5,17 @@ class CustomTextFormField extends StatelessWidget {
   final String title;
   final String hintText;
   final bool obsecure;
+  final bool readOnly;
   final TextEditingController controller;
 
-  const CustomTextFormField(
-      {Key? key,
-      required this.title,
-      required this.hintText,
-      required this.controller,
-      this.obsecure = false})
-      : super(key: key);
+  const CustomTextFormField({
+    Key? key,
+    required this.title,
+    required this.hintText,
+    required this.controller,
+    this.obsecure = false,
+    this.readOnly = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class CustomTextFormField extends StatelessWidget {
             obscureText: obsecure,
             cursorColor: kBlackColor,
             controller: controller,
+            readOnly: readOnly,
             decoration: InputDecoration(
                 hintText: hintText,
                 border: OutlineInputBorder(

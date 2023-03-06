@@ -6,11 +6,13 @@ class CustomButtom extends StatelessWidget {
   final double width;
   final Function() onPressed;
   final EdgeInsets margin;
+  final Color? colorButton;
 
   const CustomButtom(
       {Key? key,
       required this.title,
       this.width = double.infinity,
+      this.colorButton,
       required this.onPressed,
       this.margin = EdgeInsets.zero})
       : super(key: key);
@@ -28,7 +30,7 @@ class CustomButtom extends StatelessWidget {
           style: whiteTextStyle.copyWith(fontSize: 18, fontWeight: medium),
         ),
         style: TextButton.styleFrom(
-            backgroundColor: kPrimaryColor,
+            backgroundColor: colorButton ?? kPrimaryColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(defaultRadius))),
       ),

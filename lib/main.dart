@@ -1,9 +1,11 @@
 import 'package:agenda_luthfi/bloc/date_time_agenda_bloc.dart';
+import 'package:agenda_luthfi/bloc/gender_bloc.dart';
 import 'package:agenda_luthfi/bloc/reminder_bloc.dart';
 import 'package:agenda_luthfi/bloc/switch_agenda_bloc.dart';
 import 'package:agenda_luthfi/bloc/upload_file_bloc.dart';
 import 'package:agenda_luthfi/ui/pages/create_agenda_page.dart';
 import 'package:agenda_luthfi/ui/pages/home_page.dart';
+import 'package:agenda_luthfi/ui/pages/profile_page.dart';
 import 'package:agenda_luthfi/ui/pages/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +33,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => UploadFileBloc(),
         ),
+        BlocProvider(
+          create: (_) => GenderBloc(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -39,6 +44,7 @@ class MyApp extends StatelessWidget {
           '/sign-in': (context) => SignInPage(),
           '/home': (context) => HomePage(),
           '/create-agenda': (context) => CreateAgendaPage(),
+          '/profile': (context) => ProfilePage(),
         },
       ),
     );

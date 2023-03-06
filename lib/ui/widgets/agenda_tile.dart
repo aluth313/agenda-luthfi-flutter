@@ -91,6 +91,27 @@ class AgendaTile extends StatelessWidget {
                   SizedBox(
                     height: 5,
                   ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.notifications_active_outlined,
+                        size: 16,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        '30min',
+                        style: greyTextStyle.copyWith(
+                          fontWeight: light,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Text(
                     'Description',
                     style: greyTextStyle.copyWith(
