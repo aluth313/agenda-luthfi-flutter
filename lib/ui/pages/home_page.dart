@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print('di add');
+          Navigator.pushNamed(context, '/create-agenda');
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add_outlined),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 double defaultMargin = 24.0;
 double defaultRadius = 17.0;
@@ -8,6 +9,7 @@ Color kPrimaryColor = Color(0xff5C40CC);
 Color kBlackColor = Color(0xff1F1449);
 Color kWhiteColor = Color(0xffFFFFFF);
 Color kGreyColor = Color(0xff9698A9);
+Color kGreyTextColor = Color(0xff8B8B8B);
 Color kGreenColor = Color(0xff0EC3AE);
 Color kRedColor = Color(0xffEB70A5);
 Color kAgendaContainerColor = Color(0xffFCEBE4);
@@ -43,3 +45,8 @@ FontWeight semiBold = FontWeight.w600;
 FontWeight bold = FontWeight.w700;
 FontWeight extraBold = FontWeight.w800;
 FontWeight black = FontWeight.w900;
+
+convertDate(String convert, String format) {
+  DateTime dt = DateTime.parse(convert);
+  return DateFormat(format).format(dt);
+}
