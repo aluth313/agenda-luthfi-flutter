@@ -134,25 +134,6 @@ class _SignInPageState extends State<SignInPage> {
       );
     }
 
-    Widget tacButton() {
-      return GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(context, '/sign-up');
-        },
-        child: Container(
-          alignment: Alignment.center,
-          margin: EdgeInsets.only(top: 50, bottom: 75),
-          child: Text(
-            'Don\'t have an account? Sign Up',
-            style: greyTextStyle.copyWith(
-                fontSize: 16,
-                fontWeight: light,
-                decoration: TextDecoration.underline),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
@@ -161,7 +142,6 @@ class _SignInPageState extends State<SignInPage> {
           children: [
             title(),
             inputSection(),
-            tacButton(),
           ],
         ),
       ),
