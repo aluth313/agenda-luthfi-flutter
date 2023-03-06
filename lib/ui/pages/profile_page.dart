@@ -207,9 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     context.read<UploadFileBloc>().add(
                                         IsChangeAttachment(
                                             result.files.single.path!));
-                                  } else {
-                                    // User canceled the picker
-                                  }
+                                  } else {}
                                 }
                               },
                               child: Text(

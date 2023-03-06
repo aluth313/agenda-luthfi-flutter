@@ -1,3 +1,4 @@
+import 'package:agenda_luthfi/data/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -50,3 +51,5 @@ convertDate(String convert, String format) {
   DateTime dt = DateTime.parse(convert);
   return DateFormat(format).format(dt);
 }
+
+String? userGlobal;

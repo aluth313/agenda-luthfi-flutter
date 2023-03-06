@@ -1,4 +1,5 @@
 import 'package:agenda_luthfi/bloc/user_bloc.dart';
+import 'package:agenda_luthfi/data/models/user_model.dart';
 import 'package:agenda_luthfi/ui/widgets/custom_button.dart';
 import 'package:agenda_luthfi/ui/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,9 @@ class _SignInPageState extends State<SignInPage> {
             if (state is UserLoading) {
               EasyLoading.show(status: 'loading...');
             } else if (state is UserFound) {
+              userGlobal = state.user;
+              // print(userGlobal);
+              // print(userGlobal);
               EasyLoading.showSuccess('Login success!');
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Navigator.pushNamedAndRemoveUntil(

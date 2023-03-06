@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:agenda_luthfi/data/db/database_helper.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -15,7 +17,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
       emit(UserLoading());
       final checkUser = await _dbHelper.getUserByEmailPassword(email, password);
-      checkUser.isNotEmpty ? emit(UserFound()) : emit(UserNotFound());
+      checkUser.isNotEmpty
+          ? emit(UserFound(jsonEncode(checkUser)))
+          : emit(UserNotFound());
     });
 
     on<UserInit>((event, emit) async {
